@@ -225,6 +225,15 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
     private void notifyTestListenersOfEnd(SearchByClass<TestStateListener> testListeners) {
         log.info("Notifying test listeners of end of test");
         active=false;
+        if (host != null) {
+            log.info("Test has ended on host "+host);
+            long now=System.currentTimeMillis();
+            System.out.println("Finished the test on host " + host + " @ "+new Date(now)+" ("+now+")" // NOSONAR Intentional
+                    +(EXIT_AFTER_TEST ? " - exit requested." : ""));
+            if (EXIT_AFTER_TEST){ // EXIT_AFTER_TEST must be false for bonc,because it will continue to process the test.
+                exit();
+            }
+        }
         for (TestStateListener tl : testListeners.getSearchResults()) {
             try {
                 if (host == null) {
@@ -234,15 +243,6 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
                 }
             } catch (Exception e) {
                 log.warn("Error encountered during shutdown of "+tl.toString(),e);
-            }
-        }
-        if (host != null) {
-            log.info("Test has ended on host "+host);
-            long now=System.currentTimeMillis();
-            System.out.println("Finished the test on host " + host + " @ "+new Date(now)+" ("+now+")" // NOSONAR Intentional
-                    +(EXIT_AFTER_TEST ? " - exit requested." : ""));
-            if (EXIT_AFTER_TEST){
-                exit();
             }
         }
     }
