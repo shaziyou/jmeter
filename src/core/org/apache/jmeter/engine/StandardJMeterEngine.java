@@ -224,6 +224,7 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
 
     private void notifyTestListenersOfEnd(SearchByClass<TestStateListener> testListeners) {
         log.info("Notifying test listeners of end of test");
+        active=false;
         for (TestStateListener tl : testListeners.getSearchResults()) {
             try {
                 if (host == null) {
@@ -244,7 +245,6 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
                 exit();
             }
         }
-        active=false;
     }
 
     @Override
